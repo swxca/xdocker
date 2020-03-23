@@ -6,9 +6,9 @@ import (
 	"syscall"
 )
 
-func RunContainerInitProcess(command string) error {
-	argv := []string{command}
-	if err := syscall.Exec(command, argv, os.Environ()); err != nil {
+func RunContainerInitProcess(commandPath string) error {
+	argv := []string{commandPath}
+	if err := syscall.Exec(commandPath, argv, os.Environ()); err != nil {
 		return fmt.Errorf(err.Error())
 
 	}
