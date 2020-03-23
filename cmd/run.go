@@ -17,6 +17,9 @@ package cmd
 
 import (
 	"fmt"
+	"log"
+	"os"
+	"xdocker/process"
 
 	"github.com/spf13/cobra"
 )
@@ -25,22 +28,34 @@ import (
 var runCmd = &cobra.Command{
 	Use:   "run",
 	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
 
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println(cmd.Flags().GetBool("i"))
-		fmt.Println("run called")
+		i, err := cmd.Flags().GetBool("it")
+		if err!=nil{
+			fmt.Printf("command run Err : %v" ,err)
+			return
+		}
+		log.Printf("run command args is %v",args)
+		run(i,args[1])
 	},
+}
+
+func run(it bool, command string) {
+	createProcessCmd := process.CreateProcess(it, command)
+	err := createProcessCmd.Start()
+	if err!=nil{
+		panic(err)
+	}
+	fmt.Println("process is running")
+	err = createProcessCmd.Wait()
+	if err!=nil{
+		panic(err)
+	}
+	os.Exit(-1)
 }
 
 func init() {
 	rootCmd.AddCommand(runCmd)
-
 	runCmd.Flags().BoolP("it","i",false,"交互命令窗口")
 	//runCmd.MarkFlagRequired("it")
 
